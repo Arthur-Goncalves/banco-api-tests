@@ -1,21 +1,13 @@
 const request = require('supertest')
 const { expect } = require('chai')
+require('dotenv').config()
+const { obterToken } = require('../helpers/autenticacao')
 
 describe('Transferencias', () => {
     describe('POST /transferencias', () => {
         it('Deve retornar sucesso com 201 quando a transferência for igual ou acima de R$10,00', async () => {
-            //Capturar o token de autenticação
-            const respostaLogin = await request('http://localhost:3000')
-                .post('/login')
-                .set('Content-Type', 'application/json')
-                .send({
-                    'username': 'julio.lima',
-                    'senha': '123456'
-                })
-
-            const token = respostaLogin.body.token
-
-            const resposta = await request('http://localhost:3000')
+            const token = await obterToken('julio.lima', '123456')
+            const resposta = await request(process.env.BASE_URL)
                 .post('/transferencias')
                 .set('Content-Type', 'application/json')
                 .set('Authorization', `Bearer ${token}`)
@@ -32,17 +24,8 @@ describe('Transferencias', () => {
 
          it('Deve retornar falha com 422 quando a transferência for abaixo de R$10,00', async () => {  
             //Capturar o token de autenticação
-            const respostaLogin = await request('http://localhost:3000')
-                .post('/login')
-                .set('Content-Type', 'application/json')
-                .send({
-                    'username': 'julio.lima',
-                    'senha': '123456'
-                })
-
-            const token = respostaLogin.body.token
-
-            const resposta = await request('http://localhost:3000')
+            const token = await obterToken('julio.lima', '123456')
+            const resposta = await request(process.env.BASE_URL)
                 .post('/transferencias')
                 .set('Content-Type', 'application/json')
                 .set('Authorization', `Bearer ${token}`)
